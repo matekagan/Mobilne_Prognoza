@@ -28,6 +28,9 @@ class WeatherGetter {
 		if let mainDictionary = jsonObj!.value(forKey: "daily") as? NSDictionary {
 			if let dataArray = mainDictionary.value(forKey: "data") {
 				// do something with the array
+				DispatchQueue.main.async {
+					// Do something ?
+				}
 			} else {
 				print("Unable to find data in JSON")
 			}
