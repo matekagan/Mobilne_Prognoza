@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:Wheather App.xcodeproj">
+      location = "group:../Wheather App/img">
+   </FileRef>
+   <FileRef
+      location = "self:">
    </FileRef>
 </Workspace>

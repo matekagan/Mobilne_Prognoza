@@ -7,36 +7,43 @@ class WeatherGetter {
   private let darkSkyLocation = "53.23,19.57"
   private let darkSkyArguments = "units=si&exclude=currently,minutely,hourly,alerts,flags"
   
-  func getWeather() {
+    func getWeather(callback: @escaping ([[String:Any]]) -> Void) {
     
     // This is a pretty simple networking task, so the shared session will do.
-    let session = NSURLSession.sharedSession()
+    let session = URLSession.shared
     
-    let weatherRequestURL = NSURL(string: "\(darkSkyBaseApiURL)/\(darkSkyAPIKey)/\(darkSkyLocation)?\(darkSkyArguments)")!
+    let weatherRequestURL = URL(string: "\(darkSkyBaseApiURL)/\(darkSkyAPIKey)/\(darkSkyLocation)?\(darkSkyArguments)")!
     
     // The data task retrieves the data.
     let dataTask = session.dataTask(with: weatherRequestURL) {
-      (data: NSData?, response: NSURLResponse?, error: NSError?) in
+      (data: Data?, response: URLResponse?, error: Error?) in
       if let error = error {
         // Case 1: Error
         print("Error:\n\(error)")
       }
       else {
-		print("Raw data:\n\(data!)\n")
-		let dataString = String(data: data!, encoding: NSUTF8StringEncoding)
-		print("Human-readable data:\n\(dataString!)")
-		if let mainDictionary = jsonObj!.value(forKey: "daily") as? NSDictionary {
-			if let dataArray = mainDictionary.value(forKey: "data") {
-				// do something with the array
-				DispatchQueue.main.async {
-					// Do something ?
-				}
-			} else {
-				print("Unable to find data in JSON")
-			}
-		} else {
-			print("Error when parsing JSON")
-		}
+        let jsonObj : [String: Any]?
+        
+        do {
+            try jsonObj = JSONSerialization.jsonObject(with: data!, options: []) as? [String: Any]
+            
+            if let mainDictionary = jsonObj!["daily"] as? NSDictionary {
+                if let dataArray = mainDictionary.value(forKey: "data") {
+                    // do something with the array
+                    DispatchQueue.main.async {
+                        // Do something ?
+                        callback(dataArray as! [[String:Any]])
+                    }
+                } else {
+                    print("Unable to find data in JSON")
+                }
+            } else {
+                print("Error when parsing JSON")
+            }
+        } catch {
+            print("ERROR")
+        }
+    
       }
     }
     
