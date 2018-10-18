@@ -13,29 +13,40 @@ class ViewController: UIViewController {
     var data: [[String: Any]]=[]
     var currentItem : Int = 0;
     
+    func refreshData() -> Void {
+        let arrayItem = data[currentItem]
+        var text1 = (arrayItem["temperatureLow"]! as! Double).description
+        var text2 = (arrayItem["temperatureHigh"]! as! Double).description
+        temperature.text = "\(text1)°C - \(text2)°C"
+        
+        text1 = (arrayItem["pressure"]! as! Double).description
+        pressure.text = "\(text1) hPa"
+        
+        text2 = (arrayItem["windSpeed"]! as! Double).description
+        text1 = WindDirection(arrayItem["windBearing"]! as! Double).description
+        wind.text = "\(text2) m/s \(text1)"
+        
+        text1 = (arrayItem["precipIntensity"]! as! Double).description
+        rain.text = "\(text1) mm/h"
+        
+        text1 = data[currentItem]["icon"]! as! String
+        icon.image = UIImage(named: text1)
+        
+        let date = Date(timeIntervalSince1970: arrayItem["time"]! as! Double)
+        let dayTimeFormatter = DateFormatter()
+        dayTimeFormatter.dateFormat = "dd MMMM YYY"
+        self.date.text = dayTimeFormatter.string(from: date as Date)
+        
+        nextButton.isEnabled = currentItem < data.capacity - 1
+        prevButton.isEnabled = currentItem > 0
+    }
+    
     func setData(data: [[String: Any]]) -> Void {
         self.data = data
-        //var text1 =
-        //    (self.data[self.currentItem]["temperatureLow"]! as! Double).description
-        var text2 =
-            (self.data[self.currentItem]["temperatureHigh"]! as! Double).description
-        self.temperature.text = "up to \(text2)°C"
-        var text1 =
-            (self.data[self.currentItem]["pressure"]! as! Double).description
-        self.pressure.text = "\(text1) hPa"
-        text2 =
-            (self.data[self.currentItem]["windSpeed"]! as! Double).description
-        text1 = WindDirection(self.data[self.currentItem]["windBearing"]! as! Double).description
-        self.wind.text = "\(text2) m/s \(text1)"
-        text1 =
-            (self.data[self.currentItem]["precipIntensity"]! as! Double).description
-        self.rain.text = "\(text1) mm/h"
-        text1 = self.data[self.currentItem]["icon"]! as! String
-        self.icon.image = UIImage(named: text1)
     }
     
     @IBOutlet weak var prevButton: UIButton!
-
+    @IBOutlet weak var date: UILabel!
     @IBOutlet weak var icon: UIImageView!
     @IBOutlet weak var pressure: UILabel!
     @IBOutlet weak var rain: UILabel!
@@ -45,20 +56,25 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
         let weather = WeatherGetter()
         weather.getWeather(){
             (data: [[String:Any]]) in
             self.setData(data: data)
+            self.refreshData()
         }
     }
 
     // MARK: Actions
     
     @IBAction func goToNextItem(_ sender: UIButton) {
+        currentItem += 1
+        refreshData()
     }
     
     @IBAction func goToPreviousItem(_ sender: UIButton) {
+        currentItem -= 1
+        refreshData()
     }
 }
 
