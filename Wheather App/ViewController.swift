@@ -15,22 +15,22 @@ class ViewController: UIViewController {
     
     func refreshData() -> Void {
         let arrayItem = data[currentItem]
-        var text1 = (arrayItem["temperatureLow"]! as! Double).description
-        var text2 = (arrayItem["temperatureHigh"]! as! Double).description
-        temperature.text = "\(text1)°C - \(text2)°C"
+        let tempLow = (arrayItem["temperatureLow"]! as! Double).description
+        let tempHigh = (arrayItem["temperatureHigh"]! as! Double).description
+        temperature.text = "temperature: \(tempLow)°C - \(tempHigh)°C"
         
-        text1 = (arrayItem["pressure"]! as! Double).description
-        pressure.text = "\(text1) hPa"
+        let press = (arrayItem["pressure"]! as! Double).description
+        pressure.text = "pressure: \(press) hPa"
         
-        text2 = (arrayItem["windSpeed"]! as! Double).description
-        text1 = WindDirection(arrayItem["windBearing"]! as! Double).description
-        wind.text = "\(text2) m/s \(text1)"
+        let windSpeed = (arrayItem["windSpeed"]! as! Double).description
+        let windDir = WindDirection(arrayItem["windBearing"]! as! Double).description
+        wind.text = "wind: \(windSpeed) m/s \(windDir)"
         
-        text1 = (arrayItem["precipIntensity"]! as! Double).description
-        rain.text = "\(text1) mm/h"
+        let precip = (arrayItem["precipIntensity"]! as! Double).description
+        rain.text = "precip: \(precip) mm/h"
         
-        text1 = data[currentItem]["icon"]! as! String
-        icon.image = UIImage(named: text1)
+        let iconName = data[currentItem]["icon"]! as! String
+        icon.image = UIImage(named: iconName)
         
         let date = Date(timeIntervalSince1970: arrayItem["time"]! as! Double)
         let dayTimeFormatter = DateFormatter()
